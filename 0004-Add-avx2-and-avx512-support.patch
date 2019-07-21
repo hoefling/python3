@@ -10,21 +10,28 @@ Enable support for python avx2 and avx512 libraries.
  2 files changed, 37 insertions(+), 1 deletion(-)
 
 diff --git a/Lib/distutils/unixccompiler.py b/Lib/distutils/unixccompiler.py
-index ab4d4de..de09d99 100644
+index a2aa0d1..28a380f 100644
 --- a/Lib/distutils/unixccompiler.py
 +++ b/Lib/distutils/unixccompiler.py
-@@ -116,6 +116,10 @@ class UnixCCompiler(CCompiler):
-         try:
-             self.spawn(compiler_so + cc_args + [src, '-o', obj] +
-                        extra_postargs)
-+            self.spawn(compiler_so + cc_args+ ["-march=haswell", "-O3", "-fno-semantic-interposition", "-ffat-lto-objects", "-flto=4"] + [src, '-o', obj + ".avx2"] +
-+                       extra_postargs)
-+            self.spawn(compiler_so + cc_args+ ["-march=skylake-avx512", "-O3", "-fno-semantic-interposition", "-ffat-lto-objects", "-flto=4", "-mprefer-vector-width=512"] + [src, '-o', obj + ".avx512"] +
-+                       extra_postargs)
+@@ -123,9 +123,17 @@ class UnixCCompiler(CCompiler):
+             if self.detect_language(src) == 'c++':
+                 self.spawn(compiler_so_cxx + cc_args + [src, '-o', obj] +
+                            extra_postargs)
++                self.spawn(compiler_so_cxx + cc_args + ["-march=skylake", "-O3", "-fno-semantic-interposition", "-ffat-lto-objects", "-flto=4"] + [src, '-o', obj + ".avx2"] +
++                           extra_postargs)
++                self.spawn(compiler_so_cxx + cc_args + ["-march=skylake-avx512", "-O3", "-fno-semantic-interposition", "-ffat-lto-objects", "-flto=4", "-mprefer-vector-width=512"] + [src, '-o', obj + ".avx512"] +
++                           extra_postargs)
+             else:
+                 self.spawn(compiler_so + cc_args + [src, '-o', obj] +
+                            extra_postargs)
++                self.spawn(compiler_so + cc_args + ["-march=skylake", "-O3", "-fno-semantic-interposition", "-ffat-lto-objects", "-flto=4"] + [src, '-o', obj + ".avx2"] +
++                           extra_postargs)
++                self.spawn(compiler_so + cc_args + ["-march=skylake-avx512", "-O3", "-fno-semantic-interposition", "-ffat-lto-objects", "-flto=4", "-mprefer-vector-width=512"] + [src, '-o', obj + ".avx512"] +
++                           extra_postargs)
          except DistutilsExecError as msg:
              raise CompileError(msg)
  
-@@ -194,6 +198,24 @@ class UnixCCompiler(CCompiler):
+@@ -198,6 +206,24 @@ class UnixCCompiler(CCompiler):
                      linker = _osx_support.compiler_fixup(linker, ld_args)
  
                  self.spawn(linker + ld_args)

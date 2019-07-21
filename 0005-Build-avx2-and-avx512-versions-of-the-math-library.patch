@@ -15,7 +15,7 @@ index baa1d0a..7b07d60 100644
  # This is shared by the math and cmath modules
  Modules/_math.o: Modules/_math.c Modules/_math.h
  	$(CC) -c $(CCSHARED) $(PY_CORE_CFLAGS) -o $@ $<
-+	$(CC) -c $(CCSHARED) $(PY_CORE_CFLAGS) -march=haswell -o $@.avx2 $<
++	$(CC) -c $(CCSHARED) $(PY_CORE_CFLAGS) -march=skylake -o $@.avx2 $<
 +	$(CC) -c $(CCSHARED) $(PY_CORE_CFLAGS) -march=skylake-avx512 -o $@.avx512 $<
  
  # blake2s is auto-generated from blake2b
